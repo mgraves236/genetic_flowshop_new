@@ -9,12 +9,16 @@ int main() {
 	int totalPopulation = 4; // choose an even number
 	float probabilityCrossover = 1; // 0.7 - 1
 	float probabilityMutation = 0.1; // 0.05 - 5
+	int islandNumber = 4;
+	int islandIter = 2;
 
 	int** jobs = initialize(n, m);
-	printInstance(n, m, jobs);
+//	printInstance(n, m, jobs);
 	solution genetic = geneticAlgorithm(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation);
-	std::cout << genetic.objective << '\n';
+	std::cout << "BEST SCORE:\t" << genetic.objective << '\n';
 	printSchedule(genetic.schedule, jobs, n, m);
+
+	geneticAlgorithmIslands(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation, islandNumber, islandIter);
 
 	return 0;
 }
