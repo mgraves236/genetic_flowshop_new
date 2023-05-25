@@ -7,7 +7,7 @@
 RandomNumberGenerator random2 = RandomNumberGenerator(65765295);
 
 struct solution {
-	int *schedule;
+	std::vector<int> schedule;
 	int objective;
 };
 
@@ -71,6 +71,17 @@ solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float 
 		std::cout << "ITERATION:\t" << iter << "\t BEST SCORE: \t" << population.bestScore << '\n';
 		iter++;
 	}
+	int index = 0;
+	for (int i = 0; i < population.p; i++) {
+		if (population.specimen[i].fitness == population.bestScore) {
+			index = i;
+			break;
+		}
+	}
+	solution result;
+	result.schedule = population.specimen[index].genotype;
+	result.objective = population.specimen[index].fitness;
+	return result;
 }
 
 

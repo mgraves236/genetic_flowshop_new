@@ -13,6 +13,8 @@ int main() {
 	int** jobs = initialize(n, m);
 	printInstance(n, m, jobs);
 	solution genetic = geneticAlgorithm(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation);
+	std::cout << genetic.objective << '\n';
+	printSchedule(genetic.schedule, jobs, n, m);
 
 	return 0;
 }
