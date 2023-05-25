@@ -70,6 +70,30 @@ public:
 		}
 	}
 
+	int findParentTournament() {
+		const int pool = 6;
+		int best = INT_MAX;
+		int bestIndex = -1;
+		int* randIndex = new int[pool];
+		for (int i = 0; i < pool; i++) {
+			while (randIndex[i] < 0 || randIndex[i] > this->p - 1) {
+				randIndex[i] = random.nextInt(0, this->p - 1);
+			}
+		}
+//		for (int i = 0; i < pool; i++) {
+//			std::cout << randIndex[i] << '\t';
+//		}
+//		std::cout << '\n';
+
+		for (int i = 0; i < pool; i++) {
+			if (specimen[randIndex[i]].fitness < best) {
+				best = specimen[randIndex[i]].fitness;
+				bestIndex = randIndex[i];
+			}
+		}
+		return bestIndex;
+	}
+
 	void copy(Population& old) {
 		p = old.p;
 		bestScore = old.bestScore;
