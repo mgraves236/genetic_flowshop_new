@@ -82,13 +82,14 @@ solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float 
 }
 
 
-
-void geneticThread(Population& population, int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
+void geneticThread(Population &population, int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
 				   float probabilityMutation) {
 
 	int iter = 0;
 	while (iter < iterMax) {
 		Population childPopulation;
+		childPopulation.p = 0;
+//		std::cout << population.p << '\n';
 		while (childPopulation.p < population.p) {
 			int parentA = population.findParentWheel();
 			int parentB = population.findParentWheel();
@@ -96,7 +97,15 @@ void geneticThread(Population& population, int **matrix, int n, int m, int p, in
 			while (parentB == parentA) {
 				parentB = population.findParentWheel();
 			}
+
+//			std::cout << "PARENTS\t" << parentA << '\t' << parentB << '\n';
 			// perform crossover with probability
+
+//			Chromosome specimen;
+//			specimen.copy(population.specimen[parentA]);
+//			childPopulation.specimen.push_back(specimen);
+//			childPopulation.p = childPopulation.p + 1;
+//			std::cout << "CHILD P " << childPopulation.p << '\n';
 
 			float r = random2.nextFloat(0.0, 1.0);
 			if (r <= probabilityCrossover) {
@@ -106,7 +115,6 @@ void geneticThread(Population& population, int **matrix, int n, int m, int p, in
 				childPopulation.p = childPopulation.p + 1;
 				childPopulation.specimen.push_back(children.second);
 				childPopulation.p = childPopulation.p + 1;
-
 			} else if (r < 0.5) {
 				Chromosome specimen;
 				specimen.copy(population.specimen[parentA]);
@@ -119,6 +127,7 @@ void geneticThread(Population& population, int **matrix, int n, int m, int p, in
 				childPopulation.p = childPopulation.p + 1;
 			}
 		} // children generated
+//		std::cout << '\n';
 		for (int i = 0; i < childPopulation.p; i++) {
 			childPopulation.specimen[i].setScore(matrix, n, m);
 		}
@@ -135,11 +144,12 @@ void geneticThread(Population& population, int **matrix, int n, int m, int p, in
 		population.copy(childPopulation);
 //		std::cout << "ITERATION:\t" << iter << "\t BEST SCORE: \t" << population.bestScore << '\n';
 		iter++;
+//		std::cout << '\n';
 	}
 }
 
 solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
-						  float probabilityMutation, int islandNumber, int islandIter) {
+							 float probabilityMutation, int islandNumber, int islandIter, int migratingNumber) {
 	// initialize populations
 	std::vector<Population> islands;
 	std::thread threads[islandNumber];
@@ -148,38 +158,75 @@ solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax,
 		islands.emplace_back(p, n, m, matrix);
 		islands[i].findBest();
 	}
-	for(Population i : islands) {
-		std::cout << "ISLAND BEFORE\n";
-		i.print();
-	}
+//	for(Population i : islands) {
+//		std::cout << "ISLAND BEFORE\n";
+////		i.print();
+//	std::cout << i.p << '\n';
+//	}
 
 	int iter = 0;
 	while (iter < islandIter) {
+//		std::cout << "ITER: \t" << iter << '\n';
 		for (int i = 0; i < islandNumber; i++) {
-			threads[i] = std::thread(geneticThread,std::ref(islands[i]), matrix, n, m, p,
+			threads[i] = std::thread(geneticThread, std::ref(islands[i]), matrix, n, m, p,
 									 iterMax, probabilityCrossover, probabilityMutation);
 		}
 		// wait till all threads finish computing
 		for (int i = 0; i < islandNumber; i++) {
 			threads[i].join();
 		}
-		for(Population i : islands) {
-			std::cout << "ISLAND\n";
-			i.print();
+//		for(Population i : islands) {
+//			std::cout << "ISLAND\n";
+////			i.print();
+//			std::cout << i.p << '\n';
+//		}
+
+		// perform migration between islands in ring
+		for (int i = 0; i < islandNumber; i++) {
+			// get random migrating individuals
+			for (int j = 0; j < migratingNumber; j++) {
+				int rand = -1;
+				while (rand < 0 || rand > p - 1) {
+					rand = random2.nextInt(0, p - 1);
+				}
+				Chromosome temp;
+				temp.copy(islands[i].specimen[rand]);
+//				std::cout << rand << '\t' << islands[i].p <<  '\n';
+				if (i < islands.size() - 1) {
+//					std::cout << "iter island\t" << i << '\n';
+//					islands[i].specimen[rand].print();
+//					islands[i+1].specimen[rand].print();
+					islands[i].specimen[rand].copy(islands[i + 1].specimen[rand]);
+					islands[i + 1].specimen[rand].copy(temp);
+				} else {
+					islands[i].specimen[rand].copy(islands[0].specimen[rand]);
+					islands[0].specimen[rand].copy(temp);
+				}
+			}
 		}
-
-		// perform migration between islands 1 - 2
-		//									 2 - 3
-		//									 3 - 4
-		// 									 4 - 1
-
-		for (int i = 0; i < islandNumber; i++) {}
-
-
-
+		for (int i = 0; i < islandNumber; i++) {
+			islands[i].findBest();
+		}
 		iter++;
 	}
+	int index = 0;
+	int bestIsland = 0;
 
+	for (int i = 1; i < islandNumber; i++) {
+		if (islands[i].bestScore < islands[bestIsland].bestScore) {
+			bestIsland = i;
+		}
+	}
+	for (int j = 0; j < p; j++) {
+		if (islands[bestIsland].specimen[j].fitness == islands[bestIsland].bestScore) {
+			index = j;
+			break;
+		}
+	}
+	solution result;
+	result.schedule = islands[bestIsland].specimen[index].genotype;
+	result.objective = islands[bestIsland].specimen[index].fitness;
+	return result;
 }
 
 #endif //GENETIC_FLOWSHOP_GENETICALGORITHM_H

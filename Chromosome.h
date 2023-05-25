@@ -73,14 +73,16 @@ public:
 	}
 
 
-	static std::pair<Chromosome, Chromosome> onePointCrossover(Chromosome parentA, Chromosome parentB) {
+	static std::pair<Chromosome, Chromosome> onePointCrossover(Chromosome& parentA, Chromosome& parentB) {
 //		std::cout << "###### CROSSOVER ######\n";
 		Chromosome childA, childB;
 		childA.createNull(parentA);
 		childB.createNull(parentB);
 
+//		std::cout << parentA.n;
+
 		// choose a random point
-		int randIndex = random3.nextInt(1, parentA.n - 1);
+		int randIndex = random3.nextInt(2, parentA.n - 1);
 		for (int i = 0; i < randIndex; i++) {
 			childA.genotype[i] = parentA.genotype[i];
 			childB.genotype[i] = parentB.genotype[i];

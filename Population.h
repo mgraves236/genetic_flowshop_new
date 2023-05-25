@@ -45,19 +45,26 @@ public:
 	int findParentWheel() {
 		float totalScore = 0;
 		for (int i = 0; i < this->p; i++) {
-			totalScore += (float) this->specimen[i].fitness;
+			totalScore += (float) specimen[i].fitness;
 		}
-		auto* normScore = new float[this->p];
+		auto* normScore = new float[p];
 		for (int i = 0; i < this->p; i++) {
 			normScore[i] = static_cast<float>(this->specimen[i].fitness) / static_cast<float>(totalScore);
 		}
-
+		int counter = 0;
 		while (true) {
 			float rand = random.nextFloat(0.0, 1.0);
 
-			int randIndex = random.nextInt(0, this->p);
+			int randIndex = -1;
+			while (randIndex < 0 || randIndex > this->p-1) {
+				randIndex = random.nextInt(0, this->p - 1);
+			}
 
 			if (rand < normScore[randIndex]) {
+				return randIndex;
+			}
+			counter ++;
+			if (counter > 10000) {
 				return randIndex;
 			}
 		}
