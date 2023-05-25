@@ -7,6 +7,8 @@
 #include "FlowShop.h"
 
 auto rng = std::mt19937(std::random_device()());
+RandomNumberGenerator random3 = RandomNumberGenerator(659465295);
+
 
 class Chromosome {
 
@@ -19,8 +21,8 @@ public:
 
 	Chromosome() {}
 
-	Chromosome(int n, int m, int** matrix) {
-		this-> n = n;
+	Chromosome(int n, int m, int **matrix) {
+		this->n = n;
 		for (int i = 0; i < n; i++) {
 			genotype.push_back(i);
 		}
@@ -29,11 +31,19 @@ public:
 		this->setScore(matrix, n, m);
 	}
 
-	void copy(const Chromosome& old) {
+	void copy(const Chromosome &old) {
 		n = old.n;
 		fitness = old.fitness;
 		for (int i = 0; i < n; i++) {
 			genotype.push_back(old.genotype[i]);
+		}
+	}
+
+	void createNull(const Chromosome &old) {
+		n = old.n;
+		fitness = old.fitness;
+		for (int i = 0; i < n; i++) {
+			genotype.push_back(-1);
 		}
 	}
 
@@ -46,6 +56,46 @@ public:
 
 	void setScore(int **matrix, int n, int m) {
 		this->fitness = score(this->genotype, matrix, n, m);
+	}
+
+	static std::pair<Chromosome, Chromosome> onePointCrossover(Chromosome parentA, Chromosome parentB) {
+//		std::cout << "###### CROSSOVER ######\n";
+		Chromosome childA, childB;
+		childA.createNull(parentA);
+		childB.createNull(parentB);
+
+		// choose a random point
+		int randIndex = random3.nextInt(1, parentA.n - 1);
+		for (int i = 0; i < randIndex; i++) {
+			childA.genotype[i] = parentA.genotype[i];
+			childB.genotype[i] = parentB.genotype[i];
+		}
+
+		int iterIndex = childA.n - 1;
+		for (int i = childA.n - 1; i >= 0; i--) {
+			int temp = parentB.genotype[i];
+			if (std::find(childA.genotype.begin(), childA.genotype.end(), temp) != childA.genotype.end()) {
+				continue;
+			} else {
+				childA.genotype[iterIndex] = parentB.genotype[i];
+				iterIndex--;
+			}
+		}
+
+		iterIndex = childB.n - 1;
+		for (int i = childB.n - 1; i >= 0; i--) {
+			int temp = parentA.genotype[i];
+			if (std::find(childB.genotype.begin(), childB.genotype.end(), temp) != childB.genotype.end()) {
+				continue;
+			} else {
+				childB.genotype[iterIndex] = parentA.genotype[i];
+				iterIndex--;
+			}
+		}
+//		childA.print();
+//		childB.print();
+
+		return std::make_pair(childA, childB);
 	}
 
 };
