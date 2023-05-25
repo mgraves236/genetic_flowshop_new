@@ -79,10 +79,9 @@ public:
 		childA.createNull(parentA);
 		childB.createNull(parentB);
 
-//		std::cout << parentA.n;
 
 		// choose a random point
-		int randIndex = random3.nextInt(2, parentA.n - 1);
+		int randIndex = random3.nextInt(1, parentA.n - 1);
 		for (int i = 0; i < randIndex; i++) {
 			childA.genotype[i] = parentA.genotype[i];
 			childB.genotype[i] = parentB.genotype[i];
@@ -109,12 +108,71 @@ public:
 				iterIndex--;
 			}
 		}
-//		childA.print();
-//		childB.print();
 
 		return std::make_pair(childA, childB);
 	}
 
+
+	static std::pair<Chromosome, Chromosome> twoPointCrossover(Chromosome& parentA, Chromosome& parentB) {
+		Chromosome childA, childB;
+		childA.createNull(parentA);
+		childB.createNull(parentB);
+
+
+		// choose random points
+		int randIndex1 = -1;
+		int randIndex2 = -1;
+
+		while (randIndex1 < 1 || randIndex1 > parentA.n - 1)
+			randIndex1 = random3.nextInt(1, parentA.n - 1);
+
+		while (randIndex2 < 1 || randIndex2 > parentA.n - 1)
+			randIndex2 = random3.nextInt(1, parentA.n - 1);
+
+
+		int temp = 0;
+		if (randIndex1 > randIndex2) {
+			temp = randIndex1;
+			randIndex1 = randIndex2;
+			randIndex2 = temp;
+		}
+		for (int i = randIndex1; i < randIndex2 + 1; i++) {
+			childA.genotype[i] = parentA.genotype[i];
+			childB.genotype[i] = parentB.genotype[i];
+		}
+
+		int iterIndex = childA.n - 1;
+		for (int i = childA.n - 1; i >= 0; i--) {
+
+			int temp2 = parentB.genotype[i];
+			if (std::find(childA.genotype.begin(), childA.genotype.end(), temp2) != childA.genotype.end()) {
+				continue;
+			} else {
+				while (iterIndex >= randIndex1 && iterIndex <= randIndex2){
+					iterIndex--;
+				}
+				childA.genotype[iterIndex] = parentB.genotype[i];
+				iterIndex--;
+			}
+		}
+
+		iterIndex = childB.n - 1;
+		for (int i = childB.n - 1; i >= 0; i--) {
+
+			int temp2 = parentA.genotype[i];
+			if (std::find(childB.genotype.begin(), childB.genotype.end(), temp2) != childB.genotype.end()) {
+				continue;
+			} else {
+				while (iterIndex >= randIndex1 && iterIndex <= randIndex2){
+					iterIndex--;
+				}
+				childB.genotype[iterIndex] = parentA.genotype[i];
+				iterIndex--;
+			}
+		}
+
+		return std::make_pair(childA, childB);
+	}
 };
 
 #endif //GENETIC_FLOWSHOP_NEW_CHROMOSOME_H

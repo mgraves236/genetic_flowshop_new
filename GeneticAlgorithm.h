@@ -13,7 +13,7 @@ struct solution {
 };
 
 solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
-						  float probabilityMutation, bool tournament) {
+						  float probabilityMutation, bool tournament, int crossover) {
 	// initialize populations
 	Population population(p, n, m, matrix);
 	population.findBest();
@@ -30,10 +30,18 @@ solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float 
 			}
 
 			// perform crossover with probability
+			std::pair<Chromosome, Chromosome> children2 = Chromosome::twoPointCrossover(
+					population.specimen[parentA], population.specimen[parentB]);
 			float r = random2.nextFloat(0.0, 1.0);
 			if (r <= probabilityCrossover) {
-				std::pair<Chromosome, Chromosome> children = Chromosome::onePointCrossover(
-						population.specimen[parentA], population.specimen[parentB]);
+				std::pair<Chromosome, Chromosome> children;
+				if (crossover == 1) {
+					children = Chromosome::onePointCrossover(
+							population.specimen[parentA], population.specimen[parentB]);
+				} else if (crossover == 2) {
+					children = Chromosome::twoPointCrossover(
+							population.specimen[parentA], population.specimen[parentB]);
+				}
 				childPopulation.specimen.push_back(children.first);
 				childPopulation.p = childPopulation.p + 1;
 				childPopulation.specimen.push_back(children.second);
@@ -83,7 +91,7 @@ solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float 
 
 
 void geneticThread(Population &population, int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
-				   float probabilityMutation, bool tournament) {
+				   float probabilityMutation, bool tournament, int crossover) {
 
 	int iter = 0;
 	while (iter < iterMax) {
@@ -111,11 +119,17 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 
 //			std::cout << "PARENTS\t" << parentA << '\t' << parentB << '\n';
 			// perform crossover with probability
-
 			float r = random2.nextFloat(0.0, 1.0);
 			if (r <= probabilityCrossover) {
-				std::pair<Chromosome, Chromosome> children = Chromosome::onePointCrossover(
+				std::pair<Chromosome, Chromosome> children;
+				if (crossover == 1) {
+					children = Chromosome::onePointCrossover(
 						population.specimen[parentA], population.specimen[parentB]);
+				} else if (crossover == 2) {
+					children = Chromosome::twoPointCrossover(
+							population.specimen[parentA], population.specimen[parentB]);
+				}
+
 				childPopulation.specimen.push_back(children.first);
 				childPopulation.p = childPopulation.p + 1;
 				childPopulation.specimen.push_back(children.second);
@@ -154,7 +168,7 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 }
 
 solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
-							 float probabilityMutation, int islandNumber, int islandIter, int migratingNumber, bool tournament) {
+							 float probabilityMutation, int islandNumber, int islandIter, int migratingNumber, bool tournament, int crossover) {
 	// initialize populations
 	std::vector<Population> islands;
 	std::thread threads[islandNumber];
@@ -171,10 +185,10 @@ solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax,
 
 	int iter = 0;
 	while (iter < islandIter) {
-//		std::cout << "ITER: \t" << iter << '\n';
+		std::cout << "ITER: \t" << iter << '\n';
 		for (int i = 0; i < islandNumber; i++) {
 			threads[i] = std::thread(geneticThread, std::ref(islands[i]), matrix, n, m, p,
-									 iterMax, probabilityCrossover, probabilityMutation, tournament);
+									 iterMax, probabilityCrossover, probabilityMutation, tournament, crossover);
 		}
 		// wait till all threads finish computing
 		for (int i = 0; i < islandNumber; i++) {
