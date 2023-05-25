@@ -11,16 +11,16 @@ struct solution {
 	int objective;
 };
 
-solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover) {
+solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
+						  float probabilityMutation) {
 	// initialize populations
 	Population population(p, n, m, matrix);
-	population.print();
 	population.findBest();
-	Population childPopulation;
 
 	int iter = 0;
 	while (iter < iterMax) {
-		for (int i = 0; i < population.p * 2; i++) {
+		Population childPopulation;
+		while (childPopulation.p < population.p) {
 			int parentA = population.findParentWheel();
 			int parentB = population.findParentWheel();
 
@@ -58,15 +58,19 @@ solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float 
 			childPopulation.specimen[i].setScore(matrix, n, m);
 		}
 		childPopulation.findBest();
-
 		// mutation
-
+		for (int i = 0; i < childPopulation.p; i++) {
+			float r = random2.nextFloat(0.0, 1.0);
+			if (r <= probabilityMutation) {
+				childPopulation.specimen[i].mutate();
+				childPopulation.specimen[i].setScore(matrix, n, m);
+			}
+		}
+		childPopulation.findBest();
+		population.copy(childPopulation);
+		std::cout << "ITERATION:\t" << iter << "\t BEST SCORE: \t" << population.bestScore << '\n';
 		iter++;
 	}
-
-//	std::cout << "CHILD \n";
-//	childPopulation.print();
-
 }
 
 

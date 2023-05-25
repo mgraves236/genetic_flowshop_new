@@ -58,6 +58,21 @@ public:
 		this->fitness = score(this->genotype, matrix, n, m);
 	}
 
+	void mutate() {
+		// get two random indexes that will be swapped
+		int index1 = random3.nextInt(0, n - 1);
+		int index2 = random3.nextInt(0, n - 1);
+		while (index2 ==  index1) {
+			index2 = random3.nextInt(0, n - 1);
+		}
+
+		// perform swap
+		int temp = genotype[index1];
+		genotype[index1] = genotype[index2];
+		genotype[index2] = temp;
+	}
+
+
 	static std::pair<Chromosome, Chromosome> onePointCrossover(Chromosome parentA, Chromosome parentB) {
 //		std::cout << "###### CROSSOVER ######\n";
 		Chromosome childA, childB;

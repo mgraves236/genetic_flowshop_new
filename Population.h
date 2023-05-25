@@ -39,7 +39,7 @@ public:
 				bestScore = specimen[i].fitness;
 			}
 		}
-		std::cout << "Best Score: " << bestScore << '\n';
+//		std::cout << "Best Score: " << bestScore << '\n';
 	}
 
 	int findParentWheel() {
@@ -60,6 +60,15 @@ public:
 			if (rand < normScore[randIndex]) {
 				return randIndex;
 			}
+		}
+	}
+
+	void copy(Population& old) {
+		p = old.p;
+		bestScore = old.bestScore;
+		specimen.clear();
+		for (int i = 0; i < p; i++) {
+			specimen.push_back(old.specimen[i]);
 		}
 	}
 };
