@@ -2,10 +2,12 @@
 #define GENETIC_FLOWSHOP_POPULATION_H
 
 #include <vector>
+#include <climits>
 #include "Chromosome.h"
 #include "RandomNumberGenerator.h"
 
-RandomNumberGenerator random = RandomNumberGenerator(659465295);
+
+RandomNumberGenerator random4 = RandomNumberGenerator(659465295);
 
 
 class Population {
@@ -53,11 +55,11 @@ public:
 		}
 		int counter = 0;
 		while (true) {
-			float rand = random.nextFloat(0.0, 1.0);
+			float rand = random4.nextFloat(0.0, 1.0);
 
 			int randIndex = -1;
 			while (randIndex < 0 || randIndex > this->p-1) {
-				randIndex = random.nextInt(0, this->p - 1);
+				randIndex = random4.nextInt(0, this->p - 1);
 			}
 
 			if (rand < normScore[randIndex]) {
@@ -77,7 +79,7 @@ public:
 		int* randIndex = new int[pool];
 		for (int i = 0; i < pool; i++) {
 			while (randIndex[i] < 0 || randIndex[i] > this->p - 1) {
-				randIndex[i] = random.nextInt(0, this->p - 1);
+				randIndex[i] = random4.nextInt(0, this->p - 1);
 			}
 		}
 //		for (int i = 0; i < pool; i++) {

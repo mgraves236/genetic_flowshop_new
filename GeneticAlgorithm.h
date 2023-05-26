@@ -22,13 +22,23 @@ solution geneticAlgorithm(int **matrix, int n, int m, int p, int iterMax, float 
 	while (iter < iterMax) {
 		Population childPopulation;
 		while (childPopulation.p < population.p) {
-			int parentA = population.findParentWheel();
-			int parentB = population.findParentWheel();
-
-			while (parentB == parentA) {
+			int parentA;
+			int parentB;
+			if (tournament) {
+				parentA = population.findParentTournament();
+				parentB = population.findParentTournament();
+			} else {
+				parentA = population.findParentWheel();
 				parentB = population.findParentWheel();
 			}
 
+			while (parentB == parentA) {
+				if (tournament) {
+					parentB = population.findParentTournament();
+				} else {
+					parentB = population.findParentWheel();
+				}
+			}
 			// perform crossover with probability
 			std::pair<Chromosome, Chromosome> children2 = Chromosome::twoPointCrossover(
 					population.specimen[parentA], population.specimen[parentB]);
@@ -111,7 +121,7 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 
 			while (parentB == parentA) {
 				if (tournament) {
-				parentB = population.findParentTournament();
+					parentB = population.findParentTournament();
 				} else {
 					parentB = population.findParentWheel();
 				}
@@ -124,7 +134,7 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 				std::pair<Chromosome, Chromosome> children;
 				if (crossover == 1) {
 					children = Chromosome::onePointCrossover(
-						population.specimen[parentA], population.specimen[parentB]);
+							population.specimen[parentA], population.specimen[parentB]);
 				} else if (crossover == 2) {
 					children = Chromosome::twoPointCrossover(
 							population.specimen[parentA], population.specimen[parentB]);
@@ -168,7 +178,7 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 }
 
 solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax, float probabilityCrossover,
-							 float probabilityMutation, int islandNumber, int islandIter, int migratingNumber, bool tournament, int crossover) {
+								 float probabilityMutation, int islandNumber, int islandIter, int migratingNumber, bool tournament, int crossover) {
 	// initialize populations
 	std::vector<Population> islands;
 	std::thread threads[islandNumber];
@@ -185,15 +195,20 @@ solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax,
 
 	int iter = 0;
 	while (iter < islandIter) {
-		std::cout << "ITER: \t" << iter << '\n';
+//		std::cout << "ITER: \t" << iter << '\n';
+		printf("ITER %d \n", iter);
 		for (int i = 0; i < islandNumber; i++) {
-			threads[i] = std::thread(geneticThread, std::ref(islands[i]), matrix, n, m, p,
+			threads[i] = std::thread(geneticThread, std::ref(islands[i]), std::ref(matrix), n, m, p,
 									 iterMax, probabilityCrossover, probabilityMutation, tournament, crossover);
 		}
 		// wait till all threads finish computing
 		for (int i = 0; i < islandNumber; i++) {
+//			printf("%d\n", i);
+//			std::cout << "joinable " << threads[i].joinable() << '\n';
+//			std::cout << &threads[i] << '\n';
 			threads[i].join();
 		}
+
 //		for(Population i : islands) {
 //			std::cout << "ISLAND\n";
 ////			i.print();
@@ -223,6 +238,7 @@ solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax,
 				}
 			}
 		}
+
 		for (int i = 0; i < islandNumber; i++) {
 			islands[i].findBest();
 		}
