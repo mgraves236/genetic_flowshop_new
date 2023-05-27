@@ -1,31 +1,38 @@
 #include <iostream>
+#include <conio.h>
 #include "instance.h"
 #include "GeneticAlgorithm.h"
 #include "tests.h"
 
 int main() {
-//	int n = 5;
+//	int n = 115;
 //	int m = 3;
 //	int iterMax = 100;
-//	int totalPopulation = 100; // choose an even number
-//	float probabilityCrossover = 1; // 0.7 - 1
-//	float probabilityMutation = 0.2; // 0.05 - 0.5
+//	int totalPopulation = 3; // choose an even number
+//	float probabilityCrossover = 0.78; // 0.7 - 1
+//	float probabilityMutation = 0.4; // 0.05 - 0.5
 //	int islandNumber = 3;
-//	int islandIter = 100;
-//	int migratingNumber = (int) totalPopulation / 2;
-//	bool tournament = false;
-//	int crossover = 2;
+//	int islandIter = 6;
+//	int migratingNumber = (int) totalPopulation / 3;
+//	bool tournament = true;
+//	int crossover = 1;
 //
 //	int** jobs = initialize(n, m);
-//	printInstance(n, m, jobs);
-////	solution genetic = geneticAlgorithm(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation, tournament, crossover);
+//	std::cout << n << '\t';
+////	printInstance(n, m, jobs);
+//	solution genetic = geneticAlgorithm(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation, tournament, crossover);
 ////	std::cout << "BEST SCORE:\t" << genetic.objective << '\n';
+//	std::cout << genetic.objective << '\t';
+//
 ////	printSchedule(genetic.schedule, jobs, n, m);
 ////	std::cout << '\n';
-//solution geneticIslands = geneticAlgorithmIslands(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation,
+//	solution geneticIslands = geneticAlgorithmIslands(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation,
 //							islandNumber, islandIter, migratingNumber, tournament, crossover);
-//	std::cout << "BEST SCORE:\t" << geneticIslands.objective << '\n';
+////	std::cout << "BEST SCORE:\t" << geneticIslands.objective << '\n';
+//	std::cout << geneticIslands.objective << '\n';
+
 //	printSchedule(geneticIslands.schedule, jobs, n, m);
-	testIter();
+testWOIslandsTime();
+	getch();
 	return 0;
 }

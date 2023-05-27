@@ -196,7 +196,7 @@ solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax,
 	int iter = 0;
 	while (iter < islandIter) {
 //		std::cout << "ITER: \t" << iter << '\n';
-		printf("ITER %d \n", iter);
+//		printf("ITER %d \n", iter);
 		for (int i = 0; i < islandNumber; i++) {
 			threads[i] = std::thread(geneticThread, std::ref(islands[i]), std::ref(matrix), n, m, p,
 									 iterMax, probabilityCrossover, probabilityMutation, tournament, crossover);

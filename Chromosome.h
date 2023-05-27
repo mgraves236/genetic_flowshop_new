@@ -81,7 +81,11 @@ public:
 
 
 		// choose a random point
-		int randIndex = random3.nextInt(1, parentA.n - 1);
+		int randIndex = -1;
+		while (randIndex < 0 || randIndex > parentA.n) {
+			randIndex = random3.nextInt(1, parentA.n - 1);
+
+		}
 		for (int i = 0; i < randIndex; i++) {
 			childA.genotype[i] = parentA.genotype[i];
 			childB.genotype[i] = parentB.genotype[i];
