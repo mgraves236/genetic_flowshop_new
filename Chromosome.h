@@ -74,7 +74,6 @@ public:
 
 
 	static std::pair<Chromosome, Chromosome> onePointCrossover(Chromosome& parentA, Chromosome& parentB) {
-//		std::cout << "###### CROSSOVER ######\n";
 		Chromosome childA, childB;
 		childA.createNull(parentA);
 		childB.createNull(parentB);

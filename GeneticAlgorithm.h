@@ -107,7 +107,6 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 	while (iter < iterMax) {
 		Population childPopulation;
 		childPopulation.p = 0;
-//		std::cout << population.p << '\n';
 		while (childPopulation.p < population.p) {
 			int parentA;
 			int parentB;
@@ -127,7 +126,6 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 				}
 			}
 
-//			std::cout << "PARENTS\t" << parentA << '\t' << parentB << '\n';
 			// perform crossover with probability
 			float r = random2.nextFloat(0.0, 1.0);
 			if (r <= probabilityCrossover) {
@@ -156,7 +154,6 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 				childPopulation.p = childPopulation.p + 1;
 			}
 		} // children generated
-//		std::cout << '\n';
 		for (int i = 0; i < childPopulation.p; i++) {
 			childPopulation.specimen[i].setScore(matrix, n, m);
 		}
@@ -171,9 +168,7 @@ void geneticThread(Population &population, int **matrix, int n, int m, int p, in
 		}
 		childPopulation.findBest();
 		population.copy(childPopulation);
-//		std::cout << "ITERATION:\t" << iter << "\t BEST SCORE: \t" << population.bestScore << '\n';
 		iter++;
-//		std::cout << '\n';
 	}
 }
 
@@ -187,33 +182,19 @@ solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax,
 		islands.emplace_back(p, n, m, matrix);
 		islands[i].findBest();
 	}
-//	for(Population i : islands) {
-//		std::cout << "ISLAND BEFORE\n";
-////		i.print();
-//	std::cout << i.p << '\n';
-//	}
 
 	int iter = 0;
 	while (iter < islandIter) {
-//		std::cout << "ITER: \t" << iter << '\n';
-//		printf("ITER %d \n", iter);
+
 		for (int i = 0; i < islandNumber; i++) {
 			threads[i] = std::thread(geneticThread, std::ref(islands[i]), std::ref(matrix), n, m, p,
 									 iterMax, probabilityCrossover, probabilityMutation, tournament, crossover);
 		}
 		// wait till all threads finish computing
 		for (int i = 0; i < islandNumber; i++) {
-//			printf("%d\n", i);
-//			std::cout << "joinable " << threads[i].joinable() << '\n';
-//			std::cout << &threads[i] << '\n';
+
 			threads[i].join();
 		}
-
-//		for(Population i : islands) {
-//			std::cout << "ISLAND\n";
-////			i.print();
-//			std::cout << i.p << '\n';
-//		}
 
 		// perform migration between islands in ring
 		for (int i = 0; i < islandNumber; i++) {
@@ -225,11 +206,7 @@ solution geneticAlgorithmIslands(int **matrix, int n, int m, int p, int iterMax,
 				}
 				Chromosome temp;
 				temp.copy(islands[i].specimen[rand]);
-//				std::cout << rand << '\t' << islands[i].p <<  '\n';
 				if (i < islands.size() - 1) {
-//					std::cout << "iter island\t" << i << '\n';
-//					islands[i].specimen[rand].print();
-//					islands[i+1].specimen[rand].print();
 					islands[i].specimen[rand].copy(islands[i + 1].specimen[rand]);
 					islands[i + 1].specimen[rand].copy(temp);
 				} else {

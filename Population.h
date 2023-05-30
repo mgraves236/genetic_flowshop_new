@@ -51,7 +51,7 @@ public:
 		}
 		auto* normScore = new float[p];
 		for (int i = 0; i < this->p; i++) {
-			normScore[i] = static_cast<float>(this->specimen[i].fitness) / static_cast<float>(totalScore);
+			normScore[i] = 1 - static_cast<float>(this->specimen[i].fitness) / static_cast<float>(totalScore);
 		}
 		int counter = 0;
 		while (true) {
@@ -82,10 +82,6 @@ public:
 				randIndex[i] = random4.nextInt(0, this->p - 1);
 			}
 		}
-//		for (int i = 0; i < pool; i++) {
-//			std::cout << randIndex[i] << '\t';
-//		}
-//		std::cout << '\n';
 
 		for (int i = 0; i < pool; i++) {
 			if (specimen[randIndex[i]].fitness < best) {
