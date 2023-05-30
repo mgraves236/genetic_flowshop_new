@@ -19,18 +19,16 @@ int main() {
 
 	int** jobs = initialize(n, m);
 	std::cout << n << '\t';
-//	printInstance(n, m, jobs);
+	printInstance(n, m, jobs);
 	solution genetic = geneticAlgorithm(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation, tournament, crossover);
-//	std::cout << "BEST SCORE:\t" << genetic.objective << '\n';
+	std::cout << "BEST SCORE:\t" << genetic.objective << '\n';
 	std::cout << genetic.objective << '\t';
-
-//	printSchedule(genetic.schedule, jobs, n, m);
-//	std::cout << '\n';
+	printSchedule(genetic.schedule, jobs, n, m);
+	std::cout << '\n';
 	solution geneticIslands = geneticAlgorithmIslands(jobs, n, m, totalPopulation, iterMax, probabilityCrossover, probabilityMutation,
 							islandNumber, islandIter, migratingNumber, tournament, crossover);
-//	std::cout << "BEST SCORE:\t" << geneticIslands.objective << '\n';
+	std::cout << "BEST SCORE:\t" << geneticIslands.objective << '\n';
 	std::cout << geneticIslands.objective << '\n';
-
 	printSchedule(geneticIslands.schedule, jobs, n, m);
 	getch();
 	return 0;
